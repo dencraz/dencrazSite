@@ -537,11 +537,16 @@
       position: relative;
       overflow: hidden;
       transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
     }
     .project-card:hover {
       border-color: rgba(200,255,0,0.3);
       transform: translateY(-4px);
     }
+    .project-card.collab:hover { border-color: rgba(127,111,255,0.4); }
     .project-card::after {
       content: '';
       position: absolute;
@@ -549,43 +554,11 @@
       background: linear-gradient(135deg, rgba(200,255,0,0.04) 0%, transparent 60%);
       opacity: 0;
       transition: opacity 0.2s;
+      pointer-events: none;
     }
+    .project-card.collab::after { background: linear-gradient(135deg, rgba(127,111,255,0.05) 0%, transparent 60%); }
     .project-card:hover::after { opacity: 1; }
 
-    /* project-num is inside .project-meta */
-    .project-name {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 0.75rem;
-    }
-    .project-desc {
-      font-size: 0.8rem;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-    }
-    .project-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-    .tag {
-      font-size: 0.68rem;
-      color: var(--accent);
-      border: 1px solid rgba(200,255,0,0.25);
-      padding: 0.2rem 0.55rem;
-      letter-spacing: 0.06em;
-    }
-
-    .project-placeholder {
-      opacity: 0.35;
-      border-style: dashed;
-    }
-    .project-placeholder .project-name { color: var(--muted); }
-
-    .project-card { display: flex; flex-direction: column; }
     .project-meta {
       display: flex;
       align-items: center;
@@ -604,6 +577,50 @@
       padding: 0.1rem 0.45rem;
       margin-left: auto;
     }
+    .project-collab-badge {
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      border: 1px solid rgba(127,111,255,0.3);
+      padding: 0.12rem 0.45rem;
+    }
+    .project-hackathon {
+      font-size: 0.68rem;
+      color: var(--accent2);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.04em;
+    }
+    .project-name {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+    .project-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0;
+    }
+    .tag {
+      font-size: 0.68rem;
+      color: var(--accent);
+      border: 1px solid rgba(200,255,0,0.25);
+      padding: 0.2rem 0.55rem;
+      letter-spacing: 0.06em;
+    }
+    .tag.collab-tag {
+      color: var(--accent2);
+      border-color: rgba(127,111,255,0.25);
+    }
     .project-link {
       display: inline-flex;
       align-items: center;
@@ -618,7 +635,30 @@
       transition: gap 0.2s;
       letter-spacing: 0.04em;
     }
+    .project-card.collab .project-link { color: var(--accent2); }
     .project-link:hover { gap: 0.8rem; }
+
+    .projects-group-label {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .projects-group-label:first-child { margin-top: 0; }
+    .projects-group-label span {
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .projects-group-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
 
     /* ABOUT */
     .about-grid {
@@ -938,14 +978,17 @@
 
   <div class="projects-grid">
 
-    <!-- 001 — web-metro-exodus (новейший) -->
-    <a href="https://github.com/dencraz/web-metro-exodus" target="_blank" class="project-card reveal" style="text-decoration:none;color:inherit">
+    <!-- ── ЛИЧНЫЕ ───────────────────────────── -->
+    <div class="projects-group-label reveal"><span>личные</span></div>
+
+    <!-- web-metro-exodus — новейший личный -->
+    <a href="https://github.com/dencraz/web-metro-exodus" target="_blank" class="project-card reveal" style="transition-delay:0.05s">
       <div class="project-meta">
         <span class="project-num">/ 001</span>
         <span class="project-lang">HTML · CSS</span>
       </div>
       <div class="project-name">web-metro-exodus</div>
-      <div class="project-desc">Многостраничный фан-сайт по игре Metro Exodus. Страницы персонажей, компаний, форма обратной связи — всё сделано на чистом HTML и CSS без фреймворков.</div>
+      <div class="project-desc">Многостраничный фан-сайт по игре Metro Exodus. Страницы персонажей, компаний и форма обратной связи — на чистом HTML и CSS без фреймворков.</div>
       <div class="project-tags">
         <span class="tag">HTML</span>
         <span class="tag">CSS</span>
@@ -954,14 +997,14 @@
       <span class="project-link">Открыть на GitHub →</span>
     </a>
 
-    <!-- 002 — MetroGuideBot -->
-    <a href="https://github.com/dencraz/MetroGuideBot_tg_bot" target="_blank" class="project-card reveal" style="text-decoration:none;color:inherit;transition-delay:0.08s">
+    <!-- MetroGuideBot -->
+    <a href="https://github.com/dencraz/MetroGuideBot_tg_bot" target="_blank" class="project-card reveal" style="transition-delay:0.1s">
       <div class="project-meta">
         <span class="project-num">/ 002</span>
         <span class="project-lang">Python</span>
       </div>
       <div class="project-name">MetroGuideBot</div>
-      <div class="project-desc">Telegram-бот на Python, посвящённый вселенной Metro. Отвечает на вопросы по игре, отправляет изображения и помогает ориентироваться в лоре.</div>
+      <div class="project-desc">Telegram-бот на Python по вселенной Metro. Отвечает на вопросы по лору, отправляет изображения и помогает ориентироваться в мире игры.</div>
       <div class="project-tags">
         <span class="tag">Python</span>
         <span class="tag">Telegram Bot</span>
@@ -970,18 +1013,96 @@
       <span class="project-link">Открыть на GitHub →</span>
     </a>
 
-    <!-- 003 — rpg_novel -->
-    <a href="https://github.com/dencraz/rpg_novel" target="_blank" class="project-card reveal" style="text-decoration:none;color:inherit;transition-delay:0.16s">
+    <!-- rpg_novel — самый старый личный -->
+    <a href="https://github.com/dencraz/rpg_novel" target="_blank" class="project-card reveal" style="transition-delay:0.15s">
       <div class="project-meta">
         <span class="project-num">/ 003</span>
         <span class="project-lang">C++</span>
       </div>
       <div class="project-name">RPG Novel</div>
-      <div class="project-desc">Текстовая RPG-игра на C++ с консольным интерфейсом. Города, подземелья, инвентарь, монстры и система локаций — всё реализовано через ООП с раздельными классами.</div>
+      <div class="project-desc">Текстовая RPG на C++ с консольным интерфейсом. Города, подземелья, инвентарь, монстры — реализованы через ООП с раздельными классами.</div>
       <div class="project-tags">
         <span class="tag">C++</span>
         <span class="tag">OOP</span>
         <span class="tag">Game</span>
+      </div>
+      <span class="project-link">Открыть на GitHub →</span>
+    </a>
+
+    <!-- ── СОВМЕСТНЫЕ (Giga Team) ──────────── -->
+    <div class="projects-group-label reveal" style="transition-delay:0.05s"><span>совместные · Giga Team</span></div>
+
+    <!-- GigaSecretary — Хакатон Весна 2025, апрель 2025 (новейший совместный) -->
+    <a href="https://github.com/GigaGitCoder/GigaSecretary" target="_blank" class="project-card collab reveal" style="transition-delay:0.08s">
+      <div class="project-meta">
+        <span class="project-num">/ 004</span>
+        <span class="project-collab-badge">совм.</span>
+        <span class="project-lang">Python · Flutter</span>
+      </div>
+      <div class="project-hackathon">Хакатон Весна 2025 · апрель 2025</div>
+      <div class="project-name">GigaSecretary</div>
+      <div class="project-desc">Мобильное приложение для записи и расшифровки совещаний с помощью ИИ. Распознаёт речь, выделяет спикеров, генерирует краткий пересказ и список обязательств.</div>
+      <div class="project-tags">
+        <span class="tag collab-tag">Python</span>
+        <span class="tag collab-tag">Flutter</span>
+        <span class="tag collab-tag">HuggingFace</span>
+        <span class="tag collab-tag">Google API</span>
+      </div>
+      <span class="project-link">Открыть на GitHub →</span>
+    </a>
+
+    <!-- web_knb — DevHack #5, февраль–март 2025 -->
+    <a href="https://github.com/GigaGitCoder/web_knb" target="_blank" class="project-card collab reveal" style="transition-delay:0.13s">
+      <div class="project-meta">
+        <span class="project-num">/ 005</span>
+        <span class="project-collab-badge">совм.</span>
+        <span class="project-lang">Python · Django</span>
+      </div>
+      <div class="project-hackathon">DevHack #5 · фев–март 2025</div>
+      <div class="project-name">ВебКНБ</div>
+      <div class="project-desc">Веб-игра «Камень-Ножницы-Бумага» с распознаванием жестов через камеру. Django-бэкенд, компьютерное зрение (OpenCV + MediaPipe), система аккаунтов и таблица лидеров.</div>
+      <div class="project-tags">
+        <span class="tag collab-tag">Django</span>
+        <span class="tag collab-tag">OpenCV</span>
+        <span class="tag collab-tag">MediaPipe</span>
+        <span class="tag collab-tag">JS</span>
+      </div>
+      <span class="project-link">Открыть на GitHub →</span>
+    </a>
+
+    <!-- GigaPack — RinHack #9, ноябрь–декабрь 2024 -->
+    <a href="https://github.com/GigaGitCoder/GigaPack" target="_blank" class="project-card collab reveal" style="transition-delay:0.18s">
+      <div class="project-meta">
+        <span class="project-num">/ 006</span>
+        <span class="project-collab-badge">совм.</span>
+        <span class="project-lang">Django · JS</span>
+      </div>
+      <div class="project-hackathon">RinHack #9 · ноябрь–декабрь 2024</div>
+      <div class="project-name">GigaPack</div>
+      <div class="project-desc">Веб-приложение для генерации уникальных подарочных упаковок по параметрам пользователя. Django-бэкенд, интеграция с внешними API для работы с изображениями.</div>
+      <div class="project-tags">
+        <span class="tag collab-tag">Django</span>
+        <span class="tag collab-tag">Python</span>
+        <span class="tag collab-tag">CSS</span>
+        <span class="tag collab-tag">API</span>
+      </div>
+      <span class="project-link">Открыть на GitHub →</span>
+    </a>
+
+    <!-- JavaLibrarySite — самый старый совместный -->
+    <a href="https://github.com/GigaGitCoder/JavaLibrarySite" target="_blank" class="project-card collab reveal" style="transition-delay:0.23s">
+      <div class="project-meta">
+        <span class="project-num">/ 007</span>
+        <span class="project-collab-badge">совм.</span>
+        <span class="project-lang">Java · Spring</span>
+      </div>
+      <div class="project-name">JavaLibrarySite</div>
+      <div class="project-desc">Библиотечный веб-сайт на Java Spring + Thymeleaf с микросервисной архитектурой. Два отдельных сервиса для книг и пользователей, Docker-контейнеризация.</div>
+      <div class="project-tags">
+        <span class="tag collab-tag">Java</span>
+        <span class="tag collab-tag">Spring Boot</span>
+        <span class="tag collab-tag">Docker</span>
+        <span class="tag collab-tag">Microservices</span>
       </div>
       <span class="project-link">Открыть на GitHub →</span>
     </a>
@@ -1006,15 +1127,15 @@
     </div>
     <div class="contact-links">
       <a href="https://github.com/dencraz" target="_blank" class="contact-link">
-        <span>⬡</span> GitHub — dencraz
+        <span>⌥</span> GitHub — dencraz
         <span class="arrow">→</span>
       </a>
-      <a href="#" class="contact-link">
-        <span>✉</span> Email — добавь свой
+      <a href="https://vk.com/id496866701" class="contact-link">
+        <span>VK</span> Мая страница ВКонтакте 
         <span class="arrow">→</span>
       </a>
-      <a href="#" class="contact-link">
-        <span>✈</span> Telegram — добавь свой
+      <a href="https://t.me/dencraz" class="contact-link">
+        <span>✈</span> Мой Telegram — dencraz
         <span class="arrow">→</span>
       </a>
     </div>
