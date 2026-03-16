@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Даниил — Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { cursor: none !important; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --bg3: #17171f;
+      --border: rgba(255,255,255,0.07);
+      --accent: #c8ff00;
+      --accent2: #7f6fff;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+      --font-display: 'Syne', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* PRELOADER */
+    #preloader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #preloader.hidden { opacity: 0; visibility: hidden; }
+
+    .pre-logo {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+    }
+    .pre-logo span { color: var(--accent); }
+
+    .pre-bar-wrap {
+      width: 200px;
+      height: 1px;
+      background: var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .pre-bar-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    .pre-status {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      min-height: 1em;
+    }
+
+    /* BG CANVAS */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+    }
+
+    /* все секции поверх canvas */
+    nav, .hero, section, footer, hr.divider { position: relative; z-index: 1; }
+
+    /* GLITCH на имени */
+    .hero-name { position: relative; }
+    .hero-name.glitch::before,
+    .hero-name.glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      font-family: var(--font-display);
+      font-size: inherit;
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      pointer-events: none;
+    }
+    .hero-name.glitch::before {
+      color: var(--accent);
+      clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+      transform: translateX(-3px);
+      opacity: 0;
+      animation: glitchTop 4s infinite;
+    }
+    .hero-name.glitch::after {
+      color: var(--accent2);
+      clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%);
+      transform: translateX(3px);
+      opacity: 0;
+      animation: glitchBot 4s infinite 0.1s;
+    }
+    @keyframes glitchTop {
+      0%,90%,100% { opacity: 0; transform: translateX(0); }
+      91% { opacity: 0.8; transform: translateX(-4px); }
+      93% { opacity: 0; transform: translateX(2px); }
+      95% { opacity: 0.6; transform: translateX(-2px); }
+      97% { opacity: 0; }
+    }
+    @keyframes glitchBot {
+      0%,90%,100% { opacity: 0; transform: translateX(0); }
+      92% { opacity: 0.7; transform: translateX(4px); }
+      94% { opacity: 0; transform: translateX(-2px); }
+      96% { opacity: 0.5; transform: translateX(2px); }
+      98% { opacity: 0; }
+    }
+
+    /* TYPEWRITER */
+    .typewriter { display: inline; }
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px; height: 1em;
+      background: var(--accent);
+      vertical-align: text-bottom;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ЧИСЛО-СЧЁТЧИК */
+    .count-num { display: inline; }
+
+    /* МАГНИТНЫЕ КНОПКИ — доп. стиль при hover */
+    .hero-cta, .hero-cta-ghost {
+      will-change: transform;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s cubic-bezier(0.23,1,0.32,1), box-shadow 0.2s;
+    }
+    .hero-cta:hover { box-shadow: 0 8px 30px rgba(200,255,0,0.25); }
+
+    /* AURORA — мягкое свечение за героем */
+    .hero-aurora {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+      inset: -20% -10%;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 60%, rgba(200,255,0,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 30%, rgba(127,111,255,0.07) 0%, transparent 70%);
+      filter: blur(40px);
+      animation: auroraShift 8s ease-in-out infinite alternate;
+    }
+    @keyframes auroraShift {
+      0%   { transform: translate(0,0) scale(1); }
+      50%  { transform: translate(2%,3%) scale(1.04); }
+      100% { transform: translate(-2%,-2%) scale(0.97); }
+    }
+
+    /* noise overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+
+    /* CURSOR */
+    .cursor {
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 10000;
+      transition: transform 0.15s ease;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid rgba(200, 255, 0, 0.35);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 10000;
+      transform: translate(-50%, -50%);
+      transition: left 0.12s ease, top 0.12s ease, width 0.2s ease, height 0.2s ease;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10, 10, 15, 0.8);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 2.5rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 3rem;
+    }
+
+    .hero-text { position: relative; }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 24px; height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 7vw, 6.5rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+    .hero-name .line2 {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(232,232,240,0.3);
+    }
+
+    .hero-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
+      max-width: 380px;
+      line-height: 1.75;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--accent);
+      color: #0a0a0f;
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.6rem;
+      transition: all 0.2s;
+    }
+    .hero-cta:hover {
+      background: #d4ff33;
+      transform: translateY(-2px);
+    }
+    .hero-cta-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      padding: 0.85rem 1.6rem;
+      margin-left: 1rem;
+      transition: all 0.2s;
+    }
+    .hero-cta-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* HERO RIGHT — terminal card */
+    .hero-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(200,255,0,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .card-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 1.5rem;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-r { background: #ff5f56; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #27c93f; }
+    .card-title { font-size: 0.72rem; color: var(--muted); margin-left: 0.5rem; }
+
+    .terminal-line {
+      font-size: 0.8rem;
+      line-height: 2;
+      color: var(--muted);
+    }
+    .terminal-line .prompt { color: var(--accent); }
+    .terminal-line .val { color: var(--text); }
+    .terminal-line .comment { color: #3d3d55; }
+    .terminal-line .key { color: var(--accent2); }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(200,255,0,0.08);
+      border: 1px solid rgba(200,255,0,0.2);
+      color: var(--accent);
+      font-size: 0.72rem;
+      padding: 0.3rem 0.8rem;
+      margin-top: 1.5rem;
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* SECTIONS */
+    section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6rem 2.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 3.5rem;
+    }
+    .section-num {
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* STACK */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .stack-card {
+      background: var(--bg);
+      padding: 2rem;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stack-card:hover { background: var(--bg3); }
+    .stack-card:hover .stack-icon { color: var(--accent); }
+
+    .stack-icon {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 1.1rem;
+      display: block;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .stack-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .stack-learned-badge {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(200,255,0,0.35);
+      padding: 0.15rem 0.5rem;
+      white-space: nowrap;
+    }
+    .stack-learning-badge {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      border: 1px solid rgba(127,111,255,0.35);
+      padding: 0.15rem 0.5rem;
+      white-space: nowrap;
+    }
+    .stack-learning .stack-level-fill {
+      background: var(--accent2);
+      animation: learningPulse 2s ease-in-out infinite;
+    }
+    @keyframes learningPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .stack-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+    }
+    .stack-desc { font-size: 0.76rem; color: var(--muted); line-height: 1.6; }
+
+    .stack-level {
+      margin-top: 1.2rem;
+      height: 2px;
+      background: var(--border);
+      position: relative;
+    }
+    .stack-level-fill {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: var(--accent);
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 0;
+    }
+    .stack-card.visible .stack-level-fill { width: var(--lvl); }
+
+    /* PROJECTS */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .project-card:hover {
+      border-color: rgba(200,255,0,0.3);
+      transform: translateY(-4px);
+    }
+    .project-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(200,255,0,0.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .project-card:hover::after { opacity: 1; }
+
+    .project-num {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      margin-bottom: 1rem;
+    }
+    .project-name {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+    .project-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .tag {
+      font-size: 0.68rem;
+      color: var(--accent);
+      border: 1px solid rgba(200,255,0,0.25);
+      padding: 0.2rem 0.55rem;
+      letter-spacing: 0.06em;
+    }
+
+    .project-placeholder {
+      opacity: 0.35;
+      border-style: dashed;
+    }
+    .project-placeholder .project-name { color: var(--muted); }
+
+    /* ABOUT */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-facts {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .fact-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.4rem;
+      background: var(--bg);
+      font-size: 0.8rem;
+    }
+    .fact-row:hover { background: var(--bg3); }
+    .fact-label { color: var(--muted); }
+    .fact-value { color: var(--text); font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; }
+
+    .about-text p {
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.85;
+      margin-bottom: 1.2rem;
+    }
+    .about-text p strong {
+      color: var(--text);
+      font-weight: 400;
+    }
+    .about-text p .hl { color: var(--accent); }
+
+    /* CONTACT */
+    .contact-inner {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 3.5rem;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-inner::before {
+      content: '';
+      position: absolute;
+      bottom: -80px; right: -80px;
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(127,111,255,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .contact-title {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+    .contact-title span { color: var(--accent); }
+    .contact-sub { color: var(--muted); font-size: 0.82rem; line-height: 1.7; }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      padding: 0.8rem 1rem;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .contact-link:hover { border-color: var(--accent); color: var(--accent); }
+    .contact-link .arrow { margin-left: auto; opacity: 0; transition: opacity 0.2s; }
+    .contact-link:hover .arrow { opacity: 1; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      max-width: 100%;
+    }
+
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* SCROLL BAR */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); }
+
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; padding-top: 7rem; }
+      .hero-card { display: none; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .contact-inner { grid-template-columns: 1fr; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="preloader">
+  <div class="pre-logo">den<span>.</span>craz</div>
+  <div class="pre-bar-wrap"><div class="pre-bar-fill" id="preBar"></div></div>
+  <div class="pre-status" id="preStatus">инициализация...</div>
+</div>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">den<span>.</span>craz</a>
+  <ul class="nav-links">
+    <li><a href="#about">обо мне</a></li>
+    <li><a href="#stack">стек</a></li>
+    <li><a href="#projects">проекты</a></li>
+    <li><a href="#contact">контакт</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-aurora"></div>
+  <div class="hero-text reveal">
+    <div class="hero-tag">доступен для работы</div>
+    <h1 class="hero-name glitch" data-text="Даниил">
+      Даниил
+      <span class="line2">Developer</span>
+    </h1>
+    <p class="hero-desc">
+      <span class="typewriter" id="heroType"></span><span class="typewriter-cursor"></span>
+    </p>
+    <a href="#projects" class="hero-cta">Смотреть проекты →</a>
+    <a href="https://github.com/dencraz" target="_blank" class="hero-cta-ghost">GitHub ↗</a>
+  </div>
+
+  <div class="hero-card reveal" style="transition-delay:0.15s">
+    <div class="card-bar">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+      <span class="card-title">~/dencraz/profile.py</span>
+    </div>
+    <div class="terminal-line"><span class="comment"># developer profile</span></div>
+    <div class="terminal-line"><span class="key">class</span> <span class="val">Daniil</span>:</div>
+    <div class="terminal-line">&nbsp;&nbsp;<span class="key">name</span> = <span class="val">"Даниил"</span></div>
+    <div class="terminal-line">&nbsp;&nbsp;<span class="key">alias</span> = <span class="val">"dencraz"</span></div>
+    <div class="terminal-line">&nbsp;&nbsp;<span class="key">focus</span> = <span class="val">["Python", "HTML", "CSS"]</span></div>
+    <div class="terminal-line">&nbsp;&nbsp;<span class="key">repos</span> = <span class="val" id="termRepos">"..."</span></div>
+    <div class="terminal-line">&nbsp;</div>
+    <div class="terminal-line">&nbsp;&nbsp;<span class="key">def</span> <span class="prompt">build</span>(self, idea):</div>
+    <div class="terminal-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">return</span> <span class="val">idea</span>.<span class="prompt">into_reality</span>()</div>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      online · ready to code
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Обо мне</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-facts reveal">
+      <div class="fact-row">
+        <span class="fact-label">псевдоним</span>
+        <span class="fact-value">dencraz</span>
+      </div>
+      <div class="fact-row">
+        <span class="fact-label">специализация</span>
+        <span class="fact-value">Python / Web</span>
+      </div>
+      <div class="fact-row">
+        <span class="fact-label">GitHub</span>
+        <span class="fact-value">github.com/dencraz</span>
+      </div>
+      <div class="fact-row">
+        <span class="fact-label">репозитории</span>
+        <span class="fact-value" id="repoCount"><span class="count-num">0</span> публичных</span>
+      </div>
+      <div class="fact-row">
+        <span class="fact-label">статус</span>
+        <span class="fact-value" style="color:var(--accent)">● Доступен</span>
+      </div>
+    </div>
+    <div class="about-text reveal" style="transition-delay:0.1s">
+      <p>Привет, меня зовут <strong>Даниил</strong>. Я разработчик, которому нравится превращать идеи в работающие решения.</p>
+      <p>Основной инструмент — <span class="hl">Python</span>: скрипты, автоматизация, бэкенд, небольшие утилиты. Фронтенд верстаю на <span class="hl">HTML + CSS</span>, стараюсь делать чисто и без лишнего.</p>
+      <p>Постоянно учусь, слежу за новыми технологиями и пишу код, который хочется читать.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- STACK -->
+<section id="stack">
+  <div class="section-header reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Стек</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="stack-grid">
+    <div class="stack-card reveal">
+      <span class="stack-icon">
+        <svg viewBox="0 0 24 24"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h1"/><path d="M16 3h1a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2 2 2 0 0 0-2 2v5a2 2 0 0 1-2 2h-1"/><line x1="12" y1="11" x2="12" y2="11"/></svg>
+      </span>
+      <div class="stack-name">Python</div>
+      <div class="stack-desc">Основной язык. Скрипты, автоматизация, парсинг, бэкенд-логика.</div>
+      <div class="stack-level"><div class="stack-level-fill" style="--lvl: 80%"></div></div>
+    </div>
+
+    <div class="stack-card reveal" style="transition-delay:0.05s">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
+        <span class="stack-icon" style="margin-bottom:0">
+          <!-- HTML+CSS combined: brackets with inner diamond -->
+          <svg viewBox="0 0 24 24"><polyline points="7 8 3 12 7 16"/><polyline points="17 8 21 12 17 16"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+        </span>
+        <span class="stack-learned-badge">изучено</span>
+      </div>
+      <div class="stack-name">HTML + CSS</div>
+      <div class="stack-desc">Семантическая разметка, стилизация, анимации, адаптивная вёрстка.</div>
+      <div class="stack-level"><div class="stack-level-fill" style="--lvl: 100%"></div></div>
+    </div>
+
+    <div class="stack-card reveal" style="transition-delay:0.1s">
+      <span class="stack-icon">
+        <svg viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+      </span>
+      <div class="stack-name">Git & GitHub</div>
+      <div class="stack-desc">Контроль версий, ведение репозиториев, коллаборация.</div>
+      <div class="stack-level"><div class="stack-level-fill" style="--lvl: 65%"></div></div>
+    </div>
+
+    <div class="stack-card reveal" style="transition-delay:0.15s">
+      <span class="stack-icon">
+        <svg viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      </span>
+      <div class="stack-name">Linux / CLI</div>
+      <div class="stack-desc">Работа в терминале, bash-скрипты, окружение разработки.</div>
+      <div class="stack-level"><div class="stack-level-fill" style="--lvl: 60%"></div></div>
+    </div>
+
+    <div class="stack-card reveal stack-learning" style="transition-delay:0.2s">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem">
+        <span class="stack-icon" style="margin-bottom:0">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </span>
+        <span class="stack-learning-badge">изучаю</span>
+      </div>
+      <div class="stack-name">Django</div>
+      <div class="stack-desc">Веб-фреймворк на Python. Изучаю MVT, ORM, REST API.</div>
+      <div class="stack-level"><div class="stack-level-fill" style="--lvl: 20%"></div></div>
+    </div>
+
+    <div class="stack-card reveal" style="transition-delay:0.25s">
+      <span class="stack-icon">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      </span>
+      <div class="stack-name">JavaScript</div>
+      <div class="stack-desc">В планах — фреймворки, интерактивность, fullstack.</div>
+      <div class="stack-level"><div class="stack-level-fill" style="--lvl: 25%"></div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Проекты</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="projects-grid">
+    <!-- PLACEHOLDER CARDS — замени на свои проекты -->
+    <div class="project-card project-placeholder reveal">
+      <div class="project-num">/ 001</div>
+      <div class="project-name">Твой проект</div>
+      <div class="project-desc">Скоро здесь появится описание проекта. Добавь название, что делает и ссылку.</div>
+      <div class="project-tags">
+        <span class="tag">Python</span>
+        <span class="tag">скоро</span>
+      </div>
+    </div>
+    <div class="project-card project-placeholder reveal" style="transition-delay:0.08s">
+      <div class="project-num">/ 002</div>
+      <div class="project-name">Твой проект</div>
+      <div class="project-desc">Место для второго проекта. Расскажи что сделал и зачем.</div>
+      <div class="project-tags">
+        <span class="tag">HTML</span>
+        <span class="tag">CSS</span>
+        <span class="tag">скоро</span>
+      </div>
+    </div>
+    <div class="project-card project-placeholder reveal" style="transition-delay:0.16s">
+      <div class="project-num">/ 003</div>
+      <div class="project-name">Твой проект</div>
+      <div class="project-desc">Третий проект. Добавь реальные теги со своим стеком.</div>
+      <div class="project-tags">
+        <span class="tag">скоро</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Контакт</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="contact-inner reveal">
+    <div>
+      <div class="contact-title">Давай<br><span>работать</span><br>вместе.</div>
+      <p class="contact-sub">Открыт к новым проектам, коллаборациям и интересным задачам.</p>
+    </div>
+    <div class="contact-links">
+      <a href="https://github.com/dencraz" target="_blank" class="contact-link">
+        <span>⬡</span> GitHub — dencraz
+        <span class="arrow">→</span>
+      </a>
+      <a href="#" class="contact-link">
+        <span>✉</span> Email — добавь свой
+        <span class="arrow">→</span>
+      </a>
+      <a href="#" class="contact-link">
+        <span>✈</span> Telegram — добавь свой
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Даниил / dencraz</span>
+  <span>built with ♥ & code</span>
+</footer>
+
+<script>
+  // ── CANVAS BACKGROUND ─────────────────────────────────
+  (function() {
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, t = 0;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    // ── 1. Большие плавающие orbs (туман)
+    const orbs = [];
+    class Orb {
+      constructor() { this.init(true); }
+      init(rand) {
+        this.x  = rand ? Math.random() * W : W * 0.5;
+        this.y  = rand ? Math.random() * H : H * 0.5;
+        this.tx = Math.random() * W;
+        this.ty = Math.random() * H;
+        this.r  = Math.random() * 220 + 100;
+        this.col   = Math.random() < 0.55 ? [200,255,0] : [127,111,255];
+        this.base  = Math.random() * 0.055 + 0.02;
+        this.phase = Math.random() * Math.PI * 2;
+        this.spd   = Math.random() * 0.0018 + 0.0006;
+      }
+      draw(t) {
+        // медленно дрейфует к цели
+        this.x += (this.tx - this.x) * this.spd;
+        this.y += (this.ty - this.y) * this.spd;
+        if (Math.random() < 0.003) { this.tx = Math.random()*W; this.ty = Math.random()*H; }
+
+        const r   = this.r + Math.sin(t*0.0009 + this.phase) * 25;
+        const a   = this.base + Math.sin(t*0.0007 + this.phase) * 0.018;
+        const [cr,cg,cb] = this.col;
+        const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, r);
+        g.addColorStop(0,   `rgba(${cr},${cg},${cb},${a})`);
+        g.addColorStop(0.45,`rgba(${cr},${cg},${cb},${a*0.4})`);
+        g.addColorStop(1,   `rgba(${cr},${cg},${cb},0)`);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, r, 0, Math.PI*2);
+        ctx.fillStyle = g;
+        ctx.fill();
+      }
+    }
+
+    // ── 2. Мерцающие звёзды
+    const stars = [];
+    class Star {
+      constructor() { this.init(); }
+      init() {
+        this.x     = Math.random() * W;
+        this.y     = Math.random() * H;
+        this.r     = Math.random() * 1.3 + 0.2;
+        this.col   = Math.random() < 0.6 ? '200,255,0' : '127,111,255';
+        this.phase = Math.random() * Math.PI * 2;
+        this.spd   = Math.random() * 0.025 + 0.008;
+        this.base  = Math.random() * 0.5 + 0.1;
+      }
+      draw(t) {
+        const a = this.base * (0.4 + 0.6 * Math.abs(Math.sin(t * this.spd + this.phase)));
+        // гало
+        const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r * 5);
+        g.addColorStop(0, `rgba(${this.col},${a * 0.7})`);
+        g.addColorStop(1, `rgba(${this.col},0)`);
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r * 5, 0, Math.PI*2);
+        ctx.fillStyle = g;
+        ctx.fill();
+        // ядро
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(${this.col},${a})`;
+        ctx.fill();
+      }
+    }
+
+    // ── 3. Редкие падающие метеоры
+    const meteors = [];
+    class Meteor {
+      constructor() { this.reset(); }
+      reset() {
+        this.x    = Math.random() * W * 1.2 - W * 0.1;
+        this.y    = Math.random() * H * 0.4;
+        this.len  = Math.random() * 80 + 40;
+        this.spd  = Math.random() * 3 + 2;
+        this.angle = Math.PI * 0.22;
+        this.alpha = 0;
+        this.life  = Math.random() * 60 + 40;
+        this.age   = 0;
+        this.col  = Math.random() < 0.5 ? '200,255,0' : '200,200,255';
+        this.delay = Math.random() * 400;
+      }
+      draw() {
+        if (this.delay > 0) { this.delay--; return; }
+        this.age++;
+        this.x += Math.cos(this.angle) * this.spd;
+        this.y += Math.sin(this.angle) * this.spd;
+        const fade = Math.min(1, Math.min(this.age, this.life - this.age) / 12);
+        this.alpha = fade * 0.65;
+
+        const tx = this.x - Math.cos(this.angle) * this.len;
+        const ty = this.y - Math.sin(this.angle) * this.len;
+        const g = ctx.createLinearGradient(tx, ty, this.x, this.y);
+        g.addColorStop(0, `rgba(${this.col},0)`);
+        g.addColorStop(1, `rgba(${this.col},${this.alpha})`);
+
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(this.x, this.y);
+        ctx.strokeStyle = g;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        if (this.age > this.life) this.reset();
+      }
+    }
+
+    function init() {
+      orbs.length = 0; stars.length = 0; meteors.length = 0;
+      for (let i = 0; i < 5;  i++) orbs.push(new Orb());
+      for (let i = 0; i < 70; i++) stars.push(new Star());
+      for (let i = 0; i < 4;  i++) meteors.push(new Meteor());
+    }
+
+    function loop() {
+      ctx.clearRect(0, 0, W, H);
+      t++;
+      orbs.forEach(o => o.draw(t));
+      stars.forEach(s => s.draw(t));
+      meteors.forEach(m => m.draw());
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', () => { resize(); init(); });
+    resize(); init(); loop();
+  })();
+
+  // ── TYPEWRITER ────────────────────────────────────────
+  (function() {
+    const el = document.getElementById('heroType');
+    if (!el) return;
+    const texts = [
+      'Разрабатываю веб-приложения и автоматизирую всё, что можно.',
+      'Python в бэкенде, чистый HTML/CSS во фронте.',
+      'Учу Django. Пишу код, который хочется читать.'
+    ];
+    let ti = 0, ci = 0, deleting = false, pause = 0;
+
+    function tick() {
+      const full = texts[ti];
+      if (pause > 0) { pause--; setTimeout(tick, 60); return; }
+      if (!deleting) {
+        el.textContent = full.slice(0, ++ci);
+        if (ci >= full.length) { deleting = true; pause = 55; }
+        setTimeout(tick, 45);
+      } else {
+        el.textContent = full.slice(0, --ci);
+        if (ci <= 0) { deleting = false; ti = (ti+1) % texts.length; pause = 8; }
+        setTimeout(tick, 22);
+      }
+    }
+    // start after preloader
+    setTimeout(tick, 2200);
+  })();
+
+  // ── PRELOADER ──────────────────────────────────────────
+  const preloader = document.getElementById('preloader');
+  const preBar    = document.getElementById('preBar');
+  const preStatus = document.getElementById('preStatus');
+
+  const steps = [
+    { pct: 15, msg: 'загрузка шрифтов...' },
+    { pct: 35, msg: 'подключение к GitHub...' },
+    { pct: 60, msg: 'получение данных...' },
+    { pct: 85, msg: 'сборка интерфейса...' },
+    { pct: 100, msg: 'готово.' },
+  ];
+
+  async function runPreloader() {
+    for (let i = 0; i < steps.length - 1; i++) {
+      await delay(320 + Math.random() * 180);
+      setBar(steps[i].pct, steps[i].msg);
+    }
+    await fetchGitHub();
+    await delay(250);
+    setBar(100, 'готово.');
+    await delay(400);
+    preloader.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function setBar(pct, msg) {
+    preBar.style.width = pct + '%';
+    preStatus.textContent = msg;
+  }
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // ── GITHUB API ─────────────────────────────────────────
+  async function fetchGitHub() {
+    try {
+      const res  = await fetch('https://api.github.com/users/dencraz', {
+        method: 'GET',
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!res.ok) throw new Error('status ' + res.status);
+      const data = await res.json();
+      const count = data.public_repos ?? 0;
+      const elTerm = document.getElementById('termRepos');
+      if (elTerm) elTerm.textContent = count + ' repos';
+      // animated counter
+      animateCount(document.getElementById('repoCount'), count);
+    } catch (e) {
+      const el = document.getElementById('repoCount');
+      if (el) el.textContent = '— (нет сети)';
+    }
+  }
+
+  function animateCount(el, target) {
+    if (!el) return;
+    let current = 0;
+    const duration = 1200;
+    const start = performance.now();
+    function step(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      current = Math.round(eased * target);
+      el.innerHTML = `<span class="count-num">${current}</span> публичных`;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  document.body.style.overflow = 'hidden';
+  runPreloader();
+
+  // ── CURSOR ─────────────────────────────────────────────
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+    ring.style.left   = e.clientX + 'px';
+    ring.style.top    = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.style.transform = 'translate(-50%,-50%) scale(2.5)');
+    el.addEventListener('mouseleave', () => cursor.style.transform = 'translate(-50%,-50%) scale(1)');
+  });
+
+  // ── MAGNETIC BUTTONS ──────────────────────────────────
+  document.querySelectorAll('.hero-cta, .hero-cta-ghost').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const r   = btn.getBoundingClientRect();
+      const cx  = r.left + r.width  / 2;
+      const cy  = r.top  + r.height / 2;
+      const dx  = (e.clientX - cx) * 0.3;
+      const dy  = (e.clientY - cy) * 0.3;
+      btn.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
+
+  // ── SCROLL REVEAL ──────────────────────────────────────
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
