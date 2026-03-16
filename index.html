@@ -552,12 +552,7 @@
     }
     .project-card:hover::after { opacity: 1; }
 
-    .project-num {
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 0.12em;
-      margin-bottom: 1rem;
-    }
+    /* project-num is inside .project-meta */
     .project-name {
       font-family: var(--font-display);
       font-size: 1.3rem;
@@ -589,6 +584,41 @@
       border-style: dashed;
     }
     .project-placeholder .project-name { color: var(--muted); }
+
+    .project-card { display: flex; flex-direction: column; }
+    .project-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .project-num {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+    }
+    .project-lang {
+      font-size: 0.62rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.1rem 0.45rem;
+      margin-left: auto;
+    }
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: auto;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+      width: 100%;
+      transition: gap 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .project-link:hover { gap: 0.8rem; }
 
     /* ABOUT */
     .about-grid {
@@ -907,34 +937,55 @@
   </div>
 
   <div class="projects-grid">
-    <!-- PLACEHOLDER CARDS — замени на свои проекты -->
-    <div class="project-card project-placeholder reveal">
-      <div class="project-num">/ 001</div>
-      <div class="project-name">Твой проект</div>
-      <div class="project-desc">Скоро здесь появится описание проекта. Добавь название, что делает и ссылку.</div>
-      <div class="project-tags">
-        <span class="tag">Python</span>
-        <span class="tag">скоро</span>
+
+    <!-- 001 — web-metro-exodus (новейший) -->
+    <a href="https://github.com/dencraz/web-metro-exodus" target="_blank" class="project-card reveal" style="text-decoration:none;color:inherit">
+      <div class="project-meta">
+        <span class="project-num">/ 001</span>
+        <span class="project-lang">HTML · CSS</span>
       </div>
-    </div>
-    <div class="project-card project-placeholder reveal" style="transition-delay:0.08s">
-      <div class="project-num">/ 002</div>
-      <div class="project-name">Твой проект</div>
-      <div class="project-desc">Место для второго проекта. Расскажи что сделал и зачем.</div>
+      <div class="project-name">web-metro-exodus</div>
+      <div class="project-desc">Многостраничный фан-сайт по игре Metro Exodus. Страницы персонажей, компаний, форма обратной связи — всё сделано на чистом HTML и CSS без фреймворков.</div>
       <div class="project-tags">
         <span class="tag">HTML</span>
         <span class="tag">CSS</span>
-        <span class="tag">скоро</span>
+        <span class="tag">Multipage</span>
       </div>
-    </div>
-    <div class="project-card project-placeholder reveal" style="transition-delay:0.16s">
-      <div class="project-num">/ 003</div>
-      <div class="project-name">Твой проект</div>
-      <div class="project-desc">Третий проект. Добавь реальные теги со своим стеком.</div>
+      <span class="project-link">Открыть на GitHub →</span>
+    </a>
+
+    <!-- 002 — MetroGuideBot -->
+    <a href="https://github.com/dencraz/MetroGuideBot_tg_bot" target="_blank" class="project-card reveal" style="text-decoration:none;color:inherit;transition-delay:0.08s">
+      <div class="project-meta">
+        <span class="project-num">/ 002</span>
+        <span class="project-lang">Python</span>
+      </div>
+      <div class="project-name">MetroGuideBot</div>
+      <div class="project-desc">Telegram-бот на Python, посвящённый вселенной Metro. Отвечает на вопросы по игре, отправляет изображения и помогает ориентироваться в лоре.</div>
       <div class="project-tags">
-        <span class="tag">скоро</span>
+        <span class="tag">Python</span>
+        <span class="tag">Telegram Bot</span>
+        <span class="tag">API</span>
       </div>
-    </div>
+      <span class="project-link">Открыть на GitHub →</span>
+    </a>
+
+    <!-- 003 — rpg_novel -->
+    <a href="https://github.com/dencraz/rpg_novel" target="_blank" class="project-card reveal" style="text-decoration:none;color:inherit;transition-delay:0.16s">
+      <div class="project-meta">
+        <span class="project-num">/ 003</span>
+        <span class="project-lang">C++</span>
+      </div>
+      <div class="project-name">RPG Novel</div>
+      <div class="project-desc">Текстовая RPG-игра на C++ с консольным интерфейсом. Города, подземелья, инвентарь, монстры и система локаций — всё реализовано через ООП с раздельными классами.</div>
+      <div class="project-tags">
+        <span class="tag">C++</span>
+        <span class="tag">OOP</span>
+        <span class="tag">Game</span>
+      </div>
+      <span class="project-link">Открыть на GitHub →</span>
+    </a>
+
   </div>
 </section>
 
