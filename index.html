@@ -332,10 +332,15 @@
       font-size: 0.78rem;
       letter-spacing: 0.06em;
       padding: 0.85rem 1.6rem;
-      margin-left: 1rem;
       transition: all 0.2s;
     }
-    .hero-cta-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .hero-cta-ghost { margin-left: 0; }
 
     /* HERO RIGHT — terminal card */
     .hero-card {
@@ -779,12 +784,87 @@
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); }
 
+    /* ── АДАПТИВ ─────────────────────────────────────── */
+
+    /* Планшет */
+    @media (max-width: 1024px) {
+      .hero { padding: 7rem 1.5rem 3rem; gap: 2rem; }
+      section { padding: 4rem 1.5rem; }
+      .about-grid { grid-template-columns: 1fr 1.4fr; gap: 2rem; }
+      .stack-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+      .contact-inner { padding: 2.5rem; gap: 2rem; }
+    }
+
+    /* Телефон */
     @media (max-width: 768px) {
-      .hero { grid-template-columns: 1fr; padding-top: 7rem; }
-      .hero-card { display: none; }
-      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-      .contact-inner { grid-template-columns: 1fr; }
+      /* курсор — на тач-устройствах не нужен */
+      .cursor, .cursor-ring { display: none; }
+      * { cursor: auto !important; }
+
+      /* nav */
+      nav { padding: 1rem 1.2rem; }
       nav .nav-links { display: none; }
+      .lang-toggle { margin-left: 0; }
+
+      /* hero */
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 6rem 1.2rem 3rem;
+        min-height: auto;
+        gap: 2rem;
+      }
+      .hero-card { display: none; }
+      .hero-name { font-size: clamp(2.8rem, 12vw, 4.5rem); }
+      .hero-desc { max-width: 100%; font-size: 0.85rem; }
+      .hero-cta, .hero-cta-ghost {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        margin-left: 0;
+        margin-top: 0.75rem;
+      }
+      .hero-cta-ghost { margin-left: 0; }
+      /* кнопки вертикально */
+      .hero-text > a + a { margin-left: 0; }
+
+      /* sections */
+      section { padding: 3rem 1.2rem; }
+      .section-title { font-size: 1.7rem; }
+
+      /* about */
+      .about-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .about-photo-wrap { max-width: 140px; }
+
+      /* stack */
+      .stack-grid { grid-template-columns: 1fr 1fr; }
+      .stack-card { padding: 1.2rem; }
+      .stack-name { font-size: 0.9rem; }
+      .stack-desc { font-size: 0.72rem; }
+
+      /* projects */
+      .projects-grid { grid-template-columns: 1fr; }
+      .project-card { padding: 1.4rem; }
+      .project-name { font-size: 1.1rem; }
+
+      /* contact */
+      .contact-inner {
+        grid-template-columns: 1fr;
+        padding: 1.8rem 1.2rem;
+        gap: 1.5rem;
+      }
+      .contact-title { font-size: 1.8rem; }
+
+      /* footer */
+      footer { padding: 1.2rem; flex-direction: column; gap: 0.4rem; text-align: center; }
+    }
+
+    /* Маленький телефон */
+    @media (max-width: 420px) {
+      .hero-name { font-size: clamp(2.4rem, 11vw, 3.2rem); }
+      .stack-grid { grid-template-columns: 1fr; }
+      .hero-cta, .hero-cta-ghost { font-size: 0.75rem; padding: 0.75rem 1rem; }
+      nav { padding: 0.9rem 1rem; }
+      .contact-title { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -824,8 +904,10 @@
     <p class="hero-desc">
       <span class="typewriter" id="heroType"></span><span class="typewriter-cursor"></span>
     </p>
-    <a href="#projects" class="hero-cta">Смотреть проекты →</a>
-    <a href="https://github.com/dencraz" target="_blank" class="hero-cta-ghost">GitHub ↗</a>
+    <div class="hero-btns">
+      <a href="#projects" class="hero-cta">Смотреть проекты →</a>
+      <a href="https://github.com/dencraz" target="_blank" class="hero-cta-ghost">GitHub ↗</a>
+    </div>
   </div>
 
   <div class="hero-card reveal" style="transition-delay:0.15s">
